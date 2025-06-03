@@ -1,38 +1,186 @@
-
 <!DOCTYPE html>
 <html lang="en">
-<head><script type="text/javascript" src="/___vscode_livepreview_injected_script"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZOMATO ORDER FOOD ONLINE</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="C:\Users\ujjwa\Desktop\New folder\download (2).jpeg" rel="stylesheet">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tic Tac Toe Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #f0f4f8;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    #game {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .cell {
+      background-color: #fff;
+      border: 2px solid #007bff;
+      border-radius: 10px;
+      font-size: 3rem;
+      font-weight: bold;
+      color: #007bff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .cell:hover {
+      background-color: #e0f0ff;
+    }
+
+    .cell.disabled {
+      cursor: default;
+      color: #555;
+    }
+
+    #status {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: #333;
+      min-height: 1.5em;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="download.png" alt="Zomato Logo">
-        </div>  
-        <li><a href="https://www.zomato.com/partner-with-us" target="_blank"><i class="fas fa-store"></i> Add restaurant</a></li>
-                <li><a href="https://www.zomato.com/login" target="_blank"><i class="fas fa-user"></i> Log in</a></li>
-                <li><a href="https://www.zomato.com/signup" target="_blank" class="signup-btn">Sign up</a></li>
-    </header>
+  <h1>Tic Tac Toe</h1>
+  <div id="status">Player X's turn</div>
+  <div id="game">
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+  </div>
+  <button id="restartBtn">Restart Game</button>
 
-    <main>
-        <section class="hero">
-            <img src="LOGO.png.avif" alt="Zomato" class="main-logo">
-            <p>Find the best restaurants, cafés and bars in India</p>
-            <div class="search-container">
-                <input type="text" placeholder="SEARCH FOR RESTAURANT, CUISINE OR A DISH">
-                <button><i class="search-icon"></i></button>
-            </div>
-        </section>
-    </main>
+  <script>
+    (function () {
+      const cells = document.querySelectorAll('.cell');
+      const status = document.getElementById('status');
+      const restartBtn = document.getElementById('restartBtn');
 
-    <footer>  
-        COPYRIGHT &copy; ZOMATO | ALL RIGHTS RESERVED
-    </footer>
-    
-    <script src="js/script.js"></script>
+      let board = ['', '', '', '', '', '', '', '', ''];
+      let currentPlayer = 'X';
+      let isGameActive = true;
+
+      // Winning combinations
+      const winningConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+
+      function handleCellClick(e) {
+        const clickedCell = e.target;
+        const clickedIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+        if (board[clickedIndex] !== '' || !isGameActive) {
+          return;
+        }
+
+        updateCell(clickedCell, clickedIndex);
+        checkResult();
+      }
+
+      function updateCell(cell, index) {
+        board[index] = currentPlayer;
+        cell.textContent = currentPlayer;
+        cell.classList.add('disabled');
+      }
+
+      function changePlayer() {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        status.textContent = `Player ${currentPlayer}'s turn`;
+      }
+
+      function checkResult() {
+        let roundWon = false;
+
+        for (let i = 0; i < winningConditions.length; i++) {
+          const [a, b, c] = winningConditions[i];
+          if (
+            board[a] !== '' &&
+            board[a] === board[b] &&
+            board[b] === board[c]
+          ) {
+            roundWon = true;
+            break;
+          }
+        }
+
+        if (roundWon) {
+          status.textContent = `Player ${currentPlayer} wins! 🎉`;
+          isGameActive = false;
+          return;
+        }
+
+        if (!board.includes('')) {
+          status.textContent = "It's a draw!";
+          isGameActive = false;
+          return;
+        }
+
+        changePlayer();
+      }
+
+      function restartGame() {
+        board = ['', '', '', '', '', '', '', '', ''];
+        isGameActive = true;
+        currentPlayer = 'X';
+        status.textContent = `Player ${currentPlayer}'s turn`;
+        cells.forEach(cell => {
+          cell.textContent = '';
+          cell.classList.remove('disabled');
+        });
+      }
+
+      cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+      restartBtn.addEventListener('click', restartGame);
+    })();
+  </script>
 </body>
 </html>
